@@ -13,6 +13,6 @@ else
         then
             git push -u origin --all
         else
-            git push -u origin "$2" --all
+            git push -u origin "$2"
         fi
 fi
