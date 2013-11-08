@@ -18,6 +18,7 @@
     },
     "require": {
         "pimple/pimple": "1.1.*@dev",
+        "symfony/http-foundation": "2.3.*@dev",
         "filp/whoops": "1.*"
     }
 }

@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * @author AlexanderC <self@alexanderc.me>
@@ -5,8 +6,10 @@
  * @time 11:12 AM
  */
 
+set_time_limit(0);
+
 define('OPENFW_ENV', 'dev');
 
-require __DIR__ . "/bootstrap.php";
+require __DIR__ . "/../app/bootstrap.php";
 
 $app->run();

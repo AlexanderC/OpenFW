@@ -18,8 +18,8 @@ $app = call_user_func(function() {
 
     require OPENFW_ROOT . '/vendor/autoload.php';
 
-    $installationChecker = new \OpenFW\CheckInstallation(OPENFW_ROOT);
-    $installationChecker->all();
+    $installationChecker = new \OpenFW\CheckInstallation();
+    $installationChecker->allCached();
 
     return \OpenFW\Application::create();
 });
