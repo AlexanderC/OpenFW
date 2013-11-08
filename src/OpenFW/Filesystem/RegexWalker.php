@@ -81,10 +81,13 @@ class RegexWalker
 
         /** @var $file \DirectoryIterator */
         foreach($regexIterator as $file) {
-            if(false === $flags
-                || (($flags & self::IT_FILES) && $file->isFile())
-                || (($flags & self::IT_FOLDERS) && $file->isDir())
-                || (($flags & self::IT_LINKS) && $file->isLink())) {
+            if(!$file->isDot()
+                && (
+                    false === $flags
+                    || (($flags & self::IT_FILES) && $file->isFile())
+                    || (($flags & self::IT_FOLDERS) && $file->isDir())
+                    || (($flags & self::IT_LINKS) && $file->isLink())
+                )) {
                 yield $file;
             }
         }

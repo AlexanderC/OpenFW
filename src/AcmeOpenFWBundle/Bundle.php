@@ -18,7 +18,7 @@ class Bundle
 
     public function checkEnvironment()
     {
-        // validate environment
+        // check environment
     }
 
     public function init()

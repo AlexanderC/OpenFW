@@ -109,6 +109,7 @@ class Application
         $this->eventer->trigger(Constants::BEFORE_LOAD_EVENT, $this->container);
 
 
+        echo 'ok';
         $this->eventer->trigger(Constants::AFTER_LOAD_EVENT, $this->container);
     }
 

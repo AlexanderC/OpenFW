@@ -5,9 +5,9 @@
  * @time 11:16 AM
  */
 
-define('OPENFW_ENV', 'dev');
+$apacheEnv = function_exists('apache_getenv') ? apache_getenv('OPENFW_ENV') : false;
+define('OPENFW_ENV', $apacheEnv ? : 'dev');
 
 require __DIR__ . "/../app/bootstrap.php";
 
 $app->run();
-exit('ok');
