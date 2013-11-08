@@ -1,0 +1,18 @@
+#!/bin/bash
+
+GIT_BRANCH=$2;
+
+if [ -z "$1" ]
+then
+    echo "Script usage examle: ./commit \"commit message\" [branch]"
+else
+    git add .
+    git commit -a -m"$1"
+
+    if [ -z "$2" ]
+        then
+            git push -u origin --all
+        else
+            git push -u origin "$2" --all
+        fi
+fi
