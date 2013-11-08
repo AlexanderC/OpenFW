@@ -23,6 +23,6 @@ class Bundle
 
     public function init()
     {
-        echo "do some actions<br/>";
+        // initialize the bundle
     }
 } 

@@ -18,7 +18,6 @@
     },
     "require": {
         "pimple/pimple": "1.1.*@dev",
-        "filp/whoops": "1.*",
-        "monolog/monolog": "1.6.*@dev"
+        "filp/whoops": "1.*"
     }
 }
