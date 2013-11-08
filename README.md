@@ -6,7 +6,7 @@ It's an open framework that aims to be simple, ease to use, open minded, scalabl
 Notes
 =====
 
-    - "filp/whoops": "1.*" can be removed if exception prettifying need to be skipped
+ - "filp/whoops": "1.*" can be removed if exception prettifying need to be skipped
 
 Credentials
 ===========
