@@ -18,7 +18,7 @@ class Bundle
 
     public function checkEnvironment()
     {
-        throw new \RuntimeException("Wow, this is true!!!");
+        // validate environment
     }
 
     public function init()

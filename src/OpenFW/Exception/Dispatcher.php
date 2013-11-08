@@ -10,6 +10,7 @@ namespace OpenFW\Exception;
 use OpenFW\Constants;
 use OpenFW\Routing\Exception\ControllerNotFoundException;
 use OpenFW\Traits\ContainerAware;
+use Whoops\Handler\CallbackHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -42,6 +43,11 @@ class Dispatcher
                 $pageHandler = new PrettyPageHandler();
                 $run = new Run();
 
+                $eventer = $this->container[Constants::EVENTS_SERVICE];
+                $run->pushHandler(new CallbackHandler(function() use ($eventer) {
+                    $eventer->trigger(Constants::ON_RUNTIME_EXCEPTION_EVENT, [$exception, $this->container]);
+                }));
+
                 $run->pushHandler($pageHandler);
                 $run->register();
             } else {
@@ -67,6 +73,9 @@ class Dispatcher
      */
     public function exceptionHandlerLive(\Exception $e)
     {
+        $eventer = $this->container[Constants::EVENTS_SERVICE];
+        $eventer->trigger(Constants::ON_RUNTIME_EXCEPTION_EVENT, [$e, $this->container]);
+
         $header = "HTTP/1.0 500 Internal Server Error";
 
         if($e instanceof ControllerNotFoundException) {
@@ -84,6 +93,9 @@ class Dispatcher
      */
     public function exceptionHandlerDebug(\Exception $e)
     {
+        $eventer = $this->container[Constants::EVENTS_SERVICE];
+        $eventer->trigger(Constants::ON_RUNTIME_EXCEPTION_EVENT, [$e, $this->container]);
+
         $prettyException = $this->pretifyException($e);
         $isCli = $this->container[Constants::ENVIRONMENT_SERVICE]->isCli();
 
