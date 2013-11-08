@@ -5,7 +5,7 @@ GIT_BRANCH=$2;
 if [ -z "$1" ]
 then
     echo "
-    Script usage examle: ./commit \"commit message\" [branch]
+    Script usage example: ./commit \"commit message\" [branch]
     "
 else
     git add .
