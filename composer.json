@@ -1,0 +1,24 @@
+{
+    "name": "AlexanderC/OpenFW",
+    "description": "Simple, scalable, open minded PHP framework",
+    "license": "GPL v2",
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "AlexanderC",
+            "email": "self@alexanderc.me"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "": "src/" }
+    },
+    "include-path": [ "src/" ],
+    "config": {
+        "bin-dir": "bin"
+    },
+    "require": {
+        "pimple/pimple": "1.1.*@dev",
+        "filp/whoops": "1.*",
+        "monolog/monolog": "1.6.*@dev"
+    }
+}

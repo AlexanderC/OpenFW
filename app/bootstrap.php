@@ -1,0 +1,25 @@
+<?php
+/**
+ * @author AlexanderC <self@alexanderc.me>
+ * @date 11/8/13
+ * @time 11:12 AM
+ */
+
+$app = call_user_func(function() {
+    define('OPENFW_ROOT', realpath(__DIR__ . '/../'));
+
+    error_reporting(E_ALL);
+
+    $autoloadFile = OPENFW_ROOT . '/vendor/autoload.php';
+
+    if(!is_file($autoloadFile)) {
+        throw new \RuntimeException("You must do 'composer install' first.");
+    }
+
+    require OPENFW_ROOT . '/vendor/autoload.php';
+
+    $installationChecker = new \OpenFW\CheckInstallation(OPENFW_ROOT);
+    $installationChecker->all();
+
+    return \OpenFW\Application::create();
+});
