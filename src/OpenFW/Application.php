@@ -91,8 +91,6 @@ class Application
         $this->initContainer();
         $this->registerEvents();
 
-        $this->router->setContainer($this->container);
-
         $exceptionDispatcher = new Dispatcher($this->container[Constants::CONFIGURATION_CONTAINER]['debug']);
         $exceptionDispatcher->setContainer($this->container);
         $exceptionDispatcher->register();

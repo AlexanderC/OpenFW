@@ -10,7 +10,6 @@ namespace OpenFW\Routing;
 
 use OpenFW\Constants;
 use OpenFW\Routing\Exception\ControllerNotFoundException;
-use OpenFW\Traits\ContainerAware;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Router
 {
-    use ContainerAware;
-
     const ALL_METHODS = 0;
 
     /**
@@ -37,15 +34,14 @@ class Router
      */
     protected $routes = [];
 
+    /**
+     * @var array
+     */
+    protected $namedRoutes = [];
+
     public function __construct()
     {
         $this->request = Request::createFromGlobals();
-
-        $cacheFile = $this->getCacheFile();
-
-        if(is_file($cacheFile)) {
-            $this->routes = unserialize(file_get_contents($this->getCacheFile()));
-        }
     }
 
     /**
@@ -98,6 +94,20 @@ class Router
 
     /**
      * @param string $name
+     * @return Route
+     * @throws \OutOfBoundsException
+     */
+    public function getRoute($name)
+    {
+        if(!isset($this->namedRoutes[$name])) {
+            throw new \OutOfBoundsException("Route {$name} does not exists");
+        }
+
+        return $this->namedRoutes[$name];
+    }
+
+    /**
+     * @param string $name
      * @param string $expression
      * @param callable $controller
      * @param int|string $method
@@ -105,21 +115,12 @@ class Router
      */
     public function addRoute($name, $expression, callable $controller, $method = self::ALL_METHODS)
     {
-        // first case happens only after cached version loaded
-        if(isset($this->routes[$method], $this->routes[$method][$name])
-            && !is_callable($this->routes[$method][$name]->getController())) {
-            $this->routes[$method][$name]->setController($controller);
+        $route = new Route($expression, $controller);
+        $this->routes[$method] = isset($this->routes[$method]) ? $this->routes[$method] : [];
+        $this->routes[$method][$name] = $route;
+        $this->namedRoutes[$name] = $route;
 
-            return $this->routes[$method][$name];
-        } else {
-            $route = new Route($expression, $controller);
-
-            $this->routes[$method] = isset($this->routes[$method]) ? $this->routes[$method] : [];
-
-            $this->routes[$method][$name] = $route;
-
-            return $route;
-        }
+        return $route;
     }
 
     /**
@@ -156,19 +157,6 @@ class Router
     }
 
     /**
-     * @throws \RuntimeException
-     */
-    public function __destruct()
-    {
-        if(!(is_file($this->getCacheFile())
-            && false === $this->container[Constants::CONFIGURATION_CONTAINER]['debug'])) {
-            if(!file_put_contents($this->getCacheFile(), serialize($this->routes), LOCK_EX | LOCK_NB)) {
-                throw new \RuntimeException("Unable to persist router cache.");
-            }
-        }
-    }
-
-    /**
      * @param callable $controller
      * @param array $parameters
      * @return Response
@@ -183,13 +171,5 @@ class Router
         }
 
         return $result;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getCacheFile()
-    {
-        return sprintf("%s/__router_routes_cache.tmp", Constants::getResolvedPath(Constants::CACHE_DIR));
     }
 }

@@ -238,8 +238,8 @@ class Route
     /**
      * @return array
      */
-    public function __sleep()
+    /*public function __sleep()
     {
         return ['expression', 'parameters', 'matchRegex', 'reversedTemplate', 'validators'];
-    }
+    }*/
 } 
