@@ -12,6 +12,7 @@ use OpenFW\Constants;
 use OpenFW\Routing\Exception\ControllerNotFoundException;
 use OpenFW\Traits\ContainerAware;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,6 +46,14 @@ class Router
         if(is_file($cacheFile)) {
             $this->routes = unserialize(file_get_contents($this->getCacheFile()));
         }
+    }
+
+    /**
+     * @return array|mixed
+     */
+    public function getRoutes()
+    {
+        return $this->routes;
     }
 
     /**
@@ -88,26 +97,40 @@ class Router
     }
 
     /**
+     * @param string $name
      * @param string $expression
      * @param callable $controller
      * @param int|string $method
      * @return Route
      */
-    public function addRoute($expression, callable $controller, $method = self::ALL_METHODS)
+    public function addRoute($name, $expression, callable $controller, $method = self::ALL_METHODS)
     {
         // first case happens only after cached version loaded
-        if(isset($this->routes[$method], $this->routes[$method][$expression])
-            && !is_callable($this->routes[$method][$expression]->getController())) {
-            $this->routes[$method][$expression]->setController($controller);
+        if(isset($this->routes[$method], $this->routes[$method][$name])
+            && !is_callable($this->routes[$method][$name]->getController())) {
+            $this->routes[$method][$name]->setController($controller);
+
+            return $this->routes[$method][$name];
         } else {
             $route = new Route($expression, $controller);
 
             $this->routes[$method] = isset($this->routes[$method]) ? $this->routes[$method] : [];
 
-            $this->routes[$method][$expression] = $route;
+            $this->routes[$method][$name] = $route;
 
             return $route;
         }
+    }
+
+    /**
+     * @param string $url
+     * @param int $status
+     * @param array $headers
+     * @return RedirectResponse
+     */
+    public static function createRedirectResponse($url, $status = 302, array $headers = [])
+    {
+        return new RedirectResponse($url, $status, $headers);
     }
 
     /**

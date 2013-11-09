@@ -11,7 +11,7 @@ return [
         'bundles' => [
             'acme' => [
                 'class' => "AcmeOpenFWBundle\\Bundle",
-                'lazy'  => true
+                'lazy'  => false
             ]
         ]
     ],

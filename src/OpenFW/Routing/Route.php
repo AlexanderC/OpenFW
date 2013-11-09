@@ -186,7 +186,7 @@ class Route
 
             foreach($this->parameters as $parameter) {
                 if(isset($this->validators[$parameter])
-                    && !preg_match($this->validators[$parameter], $matches[$parameter][0])) {
+                    && !preg_match(sprintf(self::REGEX_TPL, $this->validators[$parameter]), $matches[$parameter][0])) {
                     $parameters = [];
                     return false;
                 }

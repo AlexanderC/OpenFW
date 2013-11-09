@@ -10,4 +10,4 @@ define('OPENFW_ENV', $apacheEnv ? : 'dev');
 
 require __DIR__ . "/../app/bootstrap.php";
 
-exit($app->run());
+$app->run()->send();
