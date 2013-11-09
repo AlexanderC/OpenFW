@@ -68,6 +68,8 @@ class Configurator
         }
 
         $this->config = $config[$this->environment];
+
+        (new Validator($this->config))->validate();
     }
 
     /**

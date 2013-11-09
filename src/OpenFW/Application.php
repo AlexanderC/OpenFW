@@ -15,6 +15,7 @@ use OpenFW\Events\Eventer;
 use OpenFW\Exception\ConfigurationException;
 use OpenFW\Exception\Dispatcher;
 use OpenFW\Filesystem\RegexWalker;
+use OpenFW\Routing\Exception\ControllerNotFoundException;
 use OpenFW\Routing\Router;
 use OpenFW\Bundles\Manager as BundlesManager;
 
@@ -72,6 +73,7 @@ class Application
      * @param Eventer $eventer
      * @param Configurator $configurator
      * @param BundlesManager $bundles
+     * @throws ConfigurationException
      */
     public function __construct(
         Environment $env, Router $router,
@@ -89,10 +91,7 @@ class Application
         $this->initContainer();
         $this->registerEvents();
 
-        $config = $this->container[Constants::CONFIGURATION_CONTAINER];
-        if(!array_key_exists('debug', $config)) {
-            throw new ConfigurationException("Unable to find debug options in environment configuration.");
-        }
+        $this->router->setContainer($this->container);
 
         $exceptionDispatcher = new Dispatcher($this->container[Constants::CONFIGURATION_CONTAINER]['debug']);
         $exceptionDispatcher->setContainer($this->container);
@@ -102,14 +101,30 @@ class Application
     }
 
     /**
-     * @return void
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \RuntimeException
+     * @throws \Exception
+     * @throws Routing\Exception\ControllerNotFoundException
      */
     public function run()
     {
         $this->eventer->trigger(Constants::BEFORE_LOAD_EVENT, $this->container);
 
+        if(!$this->env->isCli()) {
+            $this->eventer->trigger(Constants::BEFORE_CONTROLLER_CALL_EVENT, $this->container);
+            try {
+                $result = $this->router->dispatch();
+            } catch(ControllerNotFoundException $e) {
+                $this->eventer->trigger(Constants::CONTROLLER_NOT_FOUND_EVENT, $this->container);
+                throw $e;
+            }
+            $this->eventer->trigger(Constants::AFTER_CONTROLLER_CALL_EVENT, $this->container);
 
-        echo 'ok';
+            return $result;
+        } else {
+            throw new \RuntimeException("CLI environment is not yet supported.");
+        }
+
         $this->eventer->trigger(Constants::AFTER_LOAD_EVENT, $this->container);
     }
 
@@ -125,6 +140,7 @@ class Application
         $this->container[Constants::EVENTS_SERVICE] = $this->eventer;
         $this->container[Constants::CONFIGURATION_SERVICE] = $this->configurator;
         $this->container[Constants::BUNDLES_SERVICE] = $this->bundles;
+        //$this->container[Constants::CACHE_SERVICE] = Cache::create($this->configurator->getConfig()['cache']);
 
         $this->container[Constants::CONFIGURATION_CONTAINER] = $this->configurator->getConfig();
     }

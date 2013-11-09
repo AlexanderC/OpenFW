@@ -22,6 +22,9 @@ class Environment
         $this->vars = $_ENV;
     }
 
+    /**
+     * @return string
+     */
     public function getEnvironment()
     {
         return defined('OPENFW_ENV') ? OPENFW_ENV : Constants::DEFAULT_ENV;

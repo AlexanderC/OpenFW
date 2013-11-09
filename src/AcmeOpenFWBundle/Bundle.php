@@ -8,6 +8,7 @@
 namespace AcmeOpenFWBundle;
 
 
+use OpenFW\Routing\Route;
 use OpenFW\Traits\Bundle as MainBundle;
 use OpenFW\Traits\ContainerAware;
 
