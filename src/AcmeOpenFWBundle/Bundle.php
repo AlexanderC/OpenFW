@@ -9,9 +9,6 @@ namespace AcmeOpenFWBundle;
 
 
 use OpenFW\Constants;
-use OpenFW\Events\Event;
-use OpenFW\Events\Eventer;
-use OpenFW\Events\Matchers\BinaryMatcher;
 use OpenFW\Routing\Router;
 use OpenFW\Routing\Validator\RegexValidator;
 use OpenFW\Traits\Bundle as MainBundle;
