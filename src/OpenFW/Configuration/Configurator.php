@@ -8,8 +8,13 @@
 namespace OpenFW\Configuration;
 
 
+use OpenFW\Constants;
+use OpenFW\Filesystem\RegexWalker;
+
 class Configurator
 {
+    const DEFAULT_IT_REGEX = ".*\\.(php|ini)";
+
     /**
      * @var array
      */
@@ -41,6 +46,17 @@ class Configurator
     {
         $this->environment = $environment;
         $this->it = $it;
+    }
+
+    /**
+     * @param string  $directory
+     * @return Configurator
+     */
+    public function createNew($directory)
+    {
+        return new self($this->environment, (new RegexWalker(
+            $directory, self::DEFAULT_IT_REGEX
+        ))->iterator(RegexWalker::IT_FILES | RegexWalker::IT_LINKS));
     }
 
     /**

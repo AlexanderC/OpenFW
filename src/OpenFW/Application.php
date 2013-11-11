@@ -60,7 +60,7 @@ class Application
         $router = new Router();
         $eventer = new Eventer();
         $configurator = new Configurator($env->getEnvironment(), (new RegexWalker(
-            Constants::getResolvedPath(Constants::CONFIG_DIR), ".*\\.(php|ini)"
+            Constants::getResolvedPath(Constants::CONFIG_DIR), Configurator::DEFAULT_IT_REGEX
         ))->iterator(RegexWalker::IT_FILES | RegexWalker::IT_LINKS));
 
         return new self($env, $router, $eventer, $configurator);
