@@ -125,11 +125,20 @@ class Router
      */
     public function getRoute($name)
     {
-        if(!isset($this->namedRoutes[$name])) {
-            throw new \OutOfBoundsException("Route {$name} does not exists");
+        if(!$this->isRoute($name)) {
+            throw new \OutOfBoundsException("Route {$name} does not exists.");
         }
 
         return $this->namedRoutes[$name];
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function isRoute($name)
+    {
+        return isset($this->namedRoutes[$name]);
     }
 
     /**
@@ -141,12 +150,28 @@ class Router
      */
     public function addRoute($name, $expression, callable $controller, $method = self::ALL_METHODS)
     {
-        $route = new Route($expression, $controller);
+        $route = new Route($expression, $controller, $this->request->getSchemeAndHttpHost());
         $this->routes[$method] = isset($this->routes[$method]) ? $this->routes[$method] : [];
         $this->routes[$method][$name] = $route;
         $this->namedRoutes[$name] = $route;
 
         return $route;
+    }
+
+    /**
+     * @param string $name
+     * @param array $parameters
+     * @param bool $absolute
+     * @return string
+     * @throws \OutOfBoundsException
+     */
+    public function generateUrl($name, array $parameters = [], $absolute = false)
+    {
+        if(!$this->isRoute($name)) {
+            throw new \OutOfBoundsException("Route {$name} does not exists.");
+        }
+
+        return $this->getRoute($name)->generate($parameters, $absolute);
     }
 
     /**

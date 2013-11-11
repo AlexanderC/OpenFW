@@ -66,7 +66,7 @@ class Bundle
         $router->addRoute(
             "home", "/", function () use ($router) {
                 return Router::createRedirectResponse(
-                    $router->getRoute('hello_route')->generate(['name' => 'Alex'])
+                    $router->generateUrl('hello_route', ['name' => 'Alex'], true)
                 );
             }
         );

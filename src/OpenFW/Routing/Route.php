@@ -27,6 +27,11 @@ class Route
     /**
      * @var string
      */
+    protected $schemaAndHost;
+
+    /**
+     * @var string
+     */
     protected $expression;
 
     /**
@@ -57,9 +62,11 @@ class Route
     /**
      * @param string $expression
      * @param callable $controller
+     * @param string $schemaAndHost
      */
-    public function __construct($expression, callable $controller)
+    public function __construct($expression, callable $controller, $schemaAndHost)
     {
+        $this->schemaAndHost = $schemaAndHost;
         $this->controller = $controller;
         $this->expression = sprintf("/%s", ltrim(trim($expression), "/ "));
 
@@ -141,6 +148,14 @@ class Route
     /**
      * @return string
      */
+    public function getSchemaAndHost()
+    {
+        return $this->schemaAndHost;
+    }
+
+    /**
+     * @return string
+     */
     public function getExpression()
     {
         return $this->expression;
@@ -186,10 +201,11 @@ class Route
 
     /**
      * @param array $parameters
-     * @return mixed
+     * @param bool $absolute
+     * @return string
      * @throws \RuntimeException
      */
-    public function generate(array $parameters = [])
+    public function generate(array $parameters = [], $absolute = false)
     {
         $diff = array_diff($this->parameters, array_keys($parameters));
 
@@ -213,7 +229,9 @@ class Route
             }
         }
 
-        return vsprintf($this->reversedTemplate, $this->sortArrayByArray($parameters, $this->parameters));
+        $path = vsprintf($this->reversedTemplate, $this->sortArrayByArray($parameters, $this->parameters));
+
+        return false === $absolute ? $path : sprintf("%s%s", $this->schemaAndHost, $path);
     }
 
     /**
