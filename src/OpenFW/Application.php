@@ -153,8 +153,8 @@ class Application
         $this->eventer->register(Constants::AFTER_LOAD_EVENT);
 
         $this->eventer->register(Constants::BUNDLE_NOT_FOUND_EVENT);
-        $this->eventer->register(Constants::BEFORE_BUNDLE_INIT);
-        $this->eventer->register(Constants::AFTER_BUNDLE_INIT);
+        $this->eventer->register(Constants::BEFORE_BUNDLE_INIT_EVENT);
+        $this->eventer->register(Constants::AFTER_BUNDLE_INIT_EVENT);
         $this->eventer->register(Constants::BUNDLE_ENVIRONMENT_CHECK_FAIL_EVENT);
 
         $this->eventer->register(Constants::CONTROLLER_NOT_FOUND_EVENT);
@@ -171,7 +171,7 @@ class Application
     protected function initBundles()
     {
         foreach($this->bundles->getBundles() as $bundle) {
-            $this->eventer->trigger(Constants::BEFORE_BUNDLE_INIT, [$bundle, $this->container]);
+            $this->eventer->trigger(Constants::BEFORE_BUNDLE_INIT_EVENT, [$bundle, $this->container]);
 
             try {
                 $instance = $this->bundles->createBundleInstance($bundle['class'], $this->container);
@@ -194,14 +194,14 @@ class Application
                     function($container) use ($bundle, $instance) {
                         $instance->init();
                         $container[Constants::EVENTS_SERVICE]->trigger(
-                            Constants::AFTER_BUNDLE_INIT, [$bundle, $instance, $this->container]
+                            Constants::AFTER_BUNDLE_INIT_EVENT, [$bundle, $instance, $this->container]
                         );
 
                         return $instance;
                 });
             } else {
                 $instance->init();
-                $this->eventer->trigger(Constants::AFTER_BUNDLE_INIT, [$bundle, $instance, $this->container]);
+                $this->eventer->trigger(Constants::AFTER_BUNDLE_INIT_EVENT, [$bundle, $instance, $this->container]);
 
                 $this->container[$bundle['name']] = $instance;
             }

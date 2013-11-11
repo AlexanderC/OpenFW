@@ -15,8 +15,8 @@ interface SystemEvents
 
     const BUNDLE_NOT_FOUND_EVENT = 'app.bundle.missing';
     const BUNDLE_ENVIRONMENT_CHECK_FAIL_EVENT = 'app.bundle.env.invalid';
-    const BEFORE_BUNDLE_INIT = 'app.bundle.before';
-    const AFTER_BUNDLE_INIT = 'app.bundle.after';
+    const BEFORE_BUNDLE_INIT_EVENT = 'app.bundle.before';
+    const AFTER_BUNDLE_INIT_EVENT = 'app.bundle.after';
 
     const CONTROLLER_NOT_FOUND_EVENT = 'app.controller.missing';
     const BEFORE_CONTROLLER_CALL_EVENT = 'app.controller.before';
