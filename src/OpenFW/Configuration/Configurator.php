@@ -102,6 +102,6 @@ class Configurator
      */
     protected function buildParserClassName($parserName)
     {
-        return sprintf("%s\\Parsers\\%sParser", __NAMESPACE__, ucfirst($parserName));
+        return sprintf("OpenFW\\Configuration\\Parsers\\%sParser", ucfirst($parserName));
     }
 } 

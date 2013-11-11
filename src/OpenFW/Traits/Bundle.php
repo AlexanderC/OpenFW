@@ -32,6 +32,23 @@ trait Bundle
     }
 
     /**
+     * Basically use to skip reflection
+     * when using auto configurator trait
+     *
+     * @throws \RuntimeException
+     */
+    public function getDirectory()
+    {
+        static $reflectionClass;
+
+        if(!($reflectionClass instanceof \ReflectionClass)) {
+            $reflectionClass = new \ReflectionClass($this);
+        }
+
+        return dirname($reflectionClass->getFileName());
+    }
+
+    /**
      * Check working environment to pass
      * bundle requirements
      *

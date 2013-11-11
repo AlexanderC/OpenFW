@@ -12,18 +12,46 @@ use OpenFW\Constants;
 use OpenFW\Routing\Router;
 use OpenFW\Routing\Validator\RegexValidator;
 use OpenFW\Traits\Bundle as MainBundle;
+use OpenFW\Traits\ConfigurableBundle;
 use OpenFW\Traits\ContainerAware;
 
 class Bundle
 {
     use MainBundle;
     use ContainerAware;
+    use ConfigurableBundle;
 
+    /**
+     * This would be used basically to
+     * skip the step with creating class
+     * reflection, due to performance reason
+     *
+     * @return string
+     */
+    public function getDirectory()
+    {
+        return __DIR__;
+    }
+
+    /**
+     * Check if all the things were correctly
+     * installed/configured
+     *
+     * @return void
+     */
     public function checkEnvironment()
     {
         // check environment
     }
 
+    /**
+     * Called when preloading a lazy bundle
+     * instead of init method- that would
+     * be called only when accessing bundle
+     * as a service (from container)
+     *
+     * @return void
+     */
     public function initLazy()
     {
         /** @var Router $router */
@@ -53,6 +81,12 @@ class Bundle
         );
     }
 
+    /**
+     * This is the place where heavy operations
+     * should be executed
+     *
+     * @return void
+     */
     public function init()
     {
         // do some heavy stuff

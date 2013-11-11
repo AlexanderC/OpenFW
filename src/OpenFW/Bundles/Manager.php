@@ -14,6 +14,7 @@ class Manager
 {
     const BUNDLE_TRAIT = "OpenFW\\Traits\\Bundle";
     const CONTAINER_AWARE_TRAIT = "OpenFW\\Traits\\ContainerAware";
+    const CONFIGURABLE_BUNDLE_TRAIT = "OpenFW\\Traits\\ConfigurableBundle";
 
     /**
      * @var array
@@ -61,16 +62,22 @@ class Manager
 
         $traits = class_uses($class);
 
+        // check if class is certain bundle
         if(!in_array(self::BUNDLE_TRAIT, $traits)) {
             throw new \RuntimeException(sprintf("You must use %s trait in each bundle", self::BUNDLE_TRAIT));
         }
 
         $instance = new $class();
-
         $instance->setData($bundle['data']);
 
+        // check if container injection needed
         if(in_array(self::CONTAINER_AWARE_TRAIT, $traits)) {
             $instance->setContainer($container);
+        }
+
+        // check if need to load configuration
+        if(in_array(self::CONFIGURABLE_BUNDLE_TRAIT, $traits)) {
+            $instance->parseConfig();
         }
 
         $instance->checkEnvironment();
