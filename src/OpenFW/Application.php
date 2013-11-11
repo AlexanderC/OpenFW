@@ -216,4 +216,60 @@ class Application
             }
         }
     }
+
+    /**
+     * @return \OpenFW\Bundles\Manager
+     */
+    public function getBundles()
+    {
+        return $this->bundles;
+    }
+
+    /**
+     * @return \OpenFW\Configuration\Configurator
+     */
+    public function getConfigurator()
+    {
+        return $this->configurator;
+    }
+
+    /**
+     * @return \Symfony\Component\Console\Application
+     */
+    public function getConsole()
+    {
+        return $this->console;
+    }
+
+    /**
+     * @return \Pimple
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
+     * @return \OpenFW\Environment\Environment\Environment
+     */
+    public function getEnv()
+    {
+        return $this->env;
+    }
+
+    /**
+     * @return \OpenFW\Events\Eventer
+     */
+    public function getEventer()
+    {
+        return $this->eventer;
+    }
+
+    /**
+     * @return \OpenFW\Routing\Router
+     */
+    public function getRouter()
+    {
+        return $this->router;
+    }
 } 
