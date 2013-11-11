@@ -81,7 +81,6 @@ class CheckInstallation
         $packagesToExists = [
             "Pimple" => 'pimple/pimple',
             "Symfony\\Component\\HttpFoundation\\Request" => 'symfony/http-foundation',
-            //"Doctrine\\Common\\Cache\\CacheProvider" => 'doctrine/cache',
         ];
 
         foreach($packagesToExists as $classToCheck => $package) {

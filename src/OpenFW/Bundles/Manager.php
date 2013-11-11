@@ -9,8 +9,6 @@ namespace OpenFW\Bundles;
 
 
 use OpenFW\Bundles\Exception\BundleNotFoundException;
-use OpenFW\Configuration\Configurator;
-use OpenFW\Exception\ConfigurationException;
 
 class Manager
 {
@@ -18,16 +16,16 @@ class Manager
     const CONTAINER_AWARE_TRAIT = "OpenFW\\Traits\\ContainerAware";
 
     /**
-     * @var \OpenFW\Configuration\Configurator
+     * @var array
      */
-    protected $configurator;
+    protected $bundles;
 
     /**
-     * @param Configurator $configurator
+     * @param array $bundles
      */
-    public function __construct(Configurator $configurator)
+    public function __construct(array $bundles)
     {
-        $this->configurator = $configurator;
+        $this->bundles = $bundles;
     }
 
     /**
@@ -37,11 +35,7 @@ class Manager
      */
     public function getBundles()
     {
-        foreach($this->configurator->getConfig()['bundles'] as $name => $bundle) {
-            if(!isset($bundle['class'])) {
-                throw new ConfigurationException("Bundle section must have 'class' option");
-            }
-
+        foreach($this->bundles as $name => $bundle) {
             $bundle['name'] = $name;
             $bundle['lazy'] = array_key_exists('lazy', $bundle) ? $bundle['lazy'] : false;
 

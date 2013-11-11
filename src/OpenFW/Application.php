@@ -62,9 +62,8 @@ class Application
         $configurator = new Configurator($env->getEnvironment(), (new RegexWalker(
             Constants::getResolvedPath(Constants::CONFIG_DIR), ".*\\.(php|ini)"
         ))->iterator(RegexWalker::IT_FILES | RegexWalker::IT_LINKS));
-        $bundles = new BundlesManager($configurator);
 
-        return new self($env, $router, $eventer, $configurator, $bundles);
+        return new self($env, $router, $eventer, $configurator);
     }
 
     /**
@@ -72,29 +71,32 @@ class Application
      * @param Router $router
      * @param Eventer $eventer
      * @param Configurator $configurator
-     * @param BundlesManager $bundles
      * @throws ConfigurationException
      */
     public function __construct(
         Environment $env, Router $router,
-        Eventer $eventer, Configurator $configurator,
-        BundlesManager $bundles)
-    {
+        Eventer $eventer, Configurator $configurator
+    ) {
+        // register internals
         $this->env = $env;
         $this->router = $router;
         $this->eventer = $eventer;
         $this->configurator = $configurator;
-        $this->bundles = $bundles;
 
+        // parse configuration files
         $this->configurator->parse();
 
+        // init DIC and register some events
         $this->initContainer();
         $this->registerEvents();
 
+        // init exception dispatcher
         $exceptionDispatcher = new Dispatcher($this->container[Constants::CONFIGURATION_CONTAINER]['debug']);
         $exceptionDispatcher->setContainer($this->container);
         $exceptionDispatcher->register();
 
+        // init bundles manager and available bundles
+        $this->bundles = new BundlesManager($this->container[Constants::CONFIGURATION_CONTAINER]['bundles']);
         $this->initBundles();
     }
 
@@ -138,7 +140,6 @@ class Application
         $this->container[Constants::EVENTS_SERVICE] = $this->eventer;
         $this->container[Constants::CONFIGURATION_SERVICE] = $this->configurator;
         $this->container[Constants::BUNDLES_SERVICE] = $this->bundles;
-        //$this->container[Constants::CACHE_SERVICE] = Cache::create($this->configurator->getConfig()['cache']);
 
         $this->container[Constants::CONFIGURATION_CONTAINER] = $this->configurator->getConfig();
     }

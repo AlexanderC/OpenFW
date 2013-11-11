@@ -30,24 +30,28 @@ class Validator
      */
     public function validate()
     {
-        $options = ['debug', 'bundles'/*, 'cache'*/];
+        $options = ['debug', 'bundles'];
 
+        // validate available options
         foreach($options as $option) {
             if(!array_key_exists($option, $this->config)) {
                 throw new ConfigurationException("Unable to find '{$option}' options in environment configuration.");
             }
         }
 
-        /*
-        $cacheOptions = ['class', 'arguments'];
+        if(!is_array($this->config['bundles'])) {
+            throw new ConfigurationException("Bundle section must be an array.");
+        }
 
-        foreach($cacheOptions as $option) {
-            if(!array_key_exists($option, $this->config['cache'])) {
-                throw new ConfigurationException(
-                    "Unable to find 'cache.{$option}' options in environment configuration."
-                );
+        // validate bundles section
+        foreach($this->config['bundles'] as $bundle) {
+            if(!is_array($bundle)) {
+                throw new ConfigurationException("Named Bundle section must be an array.");
+            }
+
+            if(!isset($bundle['class'])) {
+                throw new ConfigurationException("Named Bundle section must have 'class' option.");
             }
         }
-        */
     }
 } 
