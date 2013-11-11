@@ -8,6 +8,7 @@
 namespace OpenFW;
 
 
+use OpenFW\Constants\Application;
 use OpenFW\Constants\Containers;
 use OpenFW\Constants\Environment;
 use OpenFW\Constants\Services;
@@ -19,7 +20,8 @@ class Constants implements
     Services,
     Containers,
     SystemEvents,
-    Environment
+    Environment,
+    Application
 {
     /**
      * @param string $relativePath

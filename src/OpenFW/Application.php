@@ -18,6 +18,7 @@ use OpenFW\Filesystem\RegexWalker;
 use OpenFW\Routing\Exception\ControllerNotFoundException;
 use OpenFW\Routing\Router;
 use OpenFW\Bundles\Manager as BundlesManager;
+use Symfony\Component\Console\Application as ConsoleApplication;
 
 class Application
 {
@@ -50,6 +51,11 @@ class Application
      * @var Bundles\Manager
      */
     protected $bundles;
+
+    /**
+     * @var \Symfony\Component\Console\Application
+     */
+    protected $console;
 
     /**
      * @return Application
@@ -95,6 +101,9 @@ class Application
         $exceptionDispatcher->setContainer($this->container);
         $exceptionDispatcher->register();
 
+        // init console application
+        $this->console = new ConsoleApplication(Constants::APP_NAME, Constants::APP_VERSION);
+
         // init bundles manager and available bundles
         $this->bundles = new BundlesManager($this->container[Constants::CONFIGURATION_CONTAINER]['bundles']);
         $this->initBundles();
@@ -122,7 +131,7 @@ class Application
 
             return $result;
         } else {
-            throw new \RuntimeException("CLI environment is not yet supported.");
+            $this->console->run();
         }
 
         $this->eventer->trigger(Constants::AFTER_LOAD_EVENT, $this->container);
@@ -140,6 +149,7 @@ class Application
         $this->container[Constants::EVENTS_SERVICE] = $this->eventer;
         $this->container[Constants::CONFIGURATION_SERVICE] = $this->configurator;
         $this->container[Constants::BUNDLES_SERVICE] = $this->bundles;
+        $this->container[Constants::CONSOLE_SERVICE] = $this->console;
 
         $this->container[Constants::CONFIGURATION_CONTAINER] = $this->configurator->getConfig();
     }

@@ -82,6 +82,7 @@ class CheckInstallation
         $packagesToExists = [
             "Pimple" => 'pimple/pimple',
             "Symfony\\Component\\HttpFoundation\\Request" => 'symfony/http-foundation',
+            "Symfony\\Component\\Console\\Application" => "symfony/console",
         ];
 
         foreach($packagesToExists as $classToCheck => $package) {
