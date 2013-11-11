@@ -174,17 +174,13 @@ class Application
             $this->eventer->trigger(Constants::BEFORE_BUNDLE_INIT_EVENT, [$bundle, $this->container]);
 
             try {
-                $instance = $this->bundles->createBundleInstance($bundle['class'], $this->container);
+                $instance = $this->bundles->createBundleInstance($bundle, $this->container);
             } catch(BundleNotFoundException $e) {
                 $this->eventer->trigger(Constants::BUNDLE_NOT_FOUND_EVENT, [$bundle, $this->container]);
                 throw $e;
-            }
-
-            try {
-                $instance->checkEnvironment();
             } catch(\Exception $e) {
                 $this->eventer->trigger(
-                    Constants::BUNDLE_ENVIRONMENT_CHECK_FAIL_EVENT, [$bundle, $instance, $this->container]
+                    Constants::BUNDLE_ENVIRONMENT_CHECK_FAIL_EVENT, [$bundle, $this->container]
                 );
                 throw $e;
             }

@@ -11,6 +11,27 @@ namespace OpenFW\Traits;
 trait Bundle
 {
     /**
+     * @var mixed
+     */
+    protected $data;
+
+    /**
+     * @param mixed $data
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
      * Check working environment to pass
      * bundle requirements
      *

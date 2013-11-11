@@ -7,11 +7,12 @@
 
 return [
     'dev' => [
-        'debug' => true,
+        'debug' => true, // debug mode flag
         'bundles' => [
             'acme' => [
-                'class' => "AcmeOpenFWBundle\\Bundle",
-                'lazy'  => true
+                'class' => "AcmeOpenFWBundle\\Bundle", // full bundle class name
+                'lazy'  => true, // init bundle only when called through service container(call initLazy first)
+                'data'  => null // data to be injected into bundle
             ]
         ]
     ],

@@ -37,20 +37,24 @@ class Manager
     {
         foreach($this->bundles as $name => $bundle) {
             $bundle['name'] = $name;
-            $bundle['lazy'] = array_key_exists('lazy', $bundle) ? $bundle['lazy'] : false;
+
+            $this->valueOrDefault('lazy', $bundle);
+            $this->valueOrDefault('data', $bundle, null);
 
             yield $bundle;
         }
     }
 
     /**
-     * @param string $class
+     * @param array $bundle
      * @param \Pimple $container
      * @return mixed
      * @throws \RuntimeException
      */
-    public function createBundleInstance($class, \Pimple $container)
+    public function createBundleInstance(array $bundle, \Pimple $container)
     {
+        $class = $bundle['class'];
+
         if(!class_exists($class)) {
             throw new BundleNotFoundException("Unable to find class {$class}");
         }
@@ -63,10 +67,24 @@ class Manager
 
         $instance = new $class();
 
+        $instance->setData($bundle['data']);
+
         if(in_array(self::CONTAINER_AWARE_TRAIT, $traits)) {
             $instance->setContainer($container);
         }
 
+        $instance->checkEnvironment();
+
         return $instance;
+    }
+
+    /**
+     * @param string $key
+     * @param array $bundle
+     * @param mixed $default
+     */
+    protected function valueOrDefault($key, array & $bundle, $default = false)
+    {
+        $bundle[$key] = array_key_exists($key, $bundle) ? $bundle[$key] : $default;
     }
 } 
