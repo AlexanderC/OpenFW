@@ -42,6 +42,10 @@ class Dispatcher
             if(class_exists('Whoops\Run')) {
                 $run = new Run();
 
+                // Set page handler for output prettified exception in non CLI environment
+                $pageHandler = new PrettyPageHandler();
+                $run->pushHandler($pageHandler);
+
                 // Set handler that would trigger runtime exception event
                 $run->pushHandler(
                     new CallbackHandler(function (\Exception $exception) {
@@ -64,10 +68,6 @@ class Dispatcher
                         })
                     );
                 }
-
-                // Set page handler for output prettified exception in non CLI environment
-                $pageHandler = new PrettyPageHandler();
-                $run->pushHandler($pageHandler);
 
                 // register Whoops\Run exceptions handler
                 $run->register();

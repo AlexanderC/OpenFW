@@ -10,8 +10,8 @@ return [
         'debug' => true, // debug mode flag
         'bundles' => [
             'acme' => [
-                'class' => "AcmeOpenFWBundle\\Bundle", // full bundle class name
-                'lazy'  => true, // init bundle only when called through service container(call initLazy first)
+                'class' => "OpenFWLoggerBundle\\Bundle", // full bundle class name
+                'lazy'  => false, // init bundle only when called through service container(call initLazy first)
                 'data'  => null // data to be injected into bundle
             ]
         ]
@@ -19,7 +19,11 @@ return [
     'prod' => [
         'debug' => false,
         'bundles' => [
-            // your bundles here
+            'acme' => [
+                'class' => "OpenFWLoggerBundle\\Bundle", // full bundle class name
+                'lazy'  => false, // init bundle only when called through service container(call initLazy first)
+                'data'  => null // data to be injected into bundle
+            ]
         ]
     ]
 ];
