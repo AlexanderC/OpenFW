@@ -39,6 +39,11 @@ class Router
      */
     protected $namedRoutes = [];
 
+    /**
+     * @var callable
+     */
+    protected $defaultController;
+
     public function __construct()
     {
         $this->request = Request::createFromGlobals();
@@ -50,6 +55,22 @@ class Router
     public function getRoutes()
     {
         return $this->routes;
+    }
+
+    /**
+     * @param callable $defaultController
+     */
+    public function setDefaultController(callable $defaultController)
+    {
+        $this->defaultController = $defaultController;
+    }
+
+    /**
+     * @return callable
+     */
+    public function getDefaultController()
+    {
+        return $this->defaultController;
     }
 
     /**
@@ -84,6 +105,11 @@ class Router
                 }
             }
         }
+
+        $controller = (false === $controller && is_callable($this->defaultController))
+            ? $this->defaultController
+            : $controller
+        ;
 
         if(false === $controller) {
             throw new ControllerNotFoundException("Controller not found.");

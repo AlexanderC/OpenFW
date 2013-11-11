@@ -11,6 +11,7 @@ namespace OpenFW\Events\Matchers;
 class RegexMatcher extends AbstractMatcher
 {
     const DELIMITER = '#';
+    const REGEX_TPL = "#^%s$#u";
 
     /**
      * @param string $event
@@ -18,7 +19,7 @@ class RegexMatcher extends AbstractMatcher
      */
     public function match($event)
     {
-        return (bool) preg_match(sprintf("%s^%s$%su", self::DELIMITER, $this->expression, self::DELIMITER), $event);
+        return (bool) preg_match(sprintf(self::REGEX_TPL, $this->expression), $event);
     }
 
 } 

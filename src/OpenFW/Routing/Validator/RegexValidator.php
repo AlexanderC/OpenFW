@@ -10,6 +10,7 @@ namespace OpenFW\Routing\Validator;
 
 class RegexValidator extends AbstractValidator
 {
+    const DELIMITER = '#';
     const REGEX_TPL = "#^%s$#u";
 
     /**

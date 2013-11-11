@@ -18,6 +18,7 @@ use OpenFW\Routing\Validator\AbstractValidator;
  */
 class Route
 {
+    const DELIMITER = '#';
     const PARAMETER_REGEX = '#(?:(?:^|/))?(\s*{\s*([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\s*}\s*)(?:(?:/)|$)#u';
     const MATCH_PARAMETER_REPLACEMENT = "/(?<\\2>[^/]*)/";
     const REVERSE_PARAMETER_REPLACEMENT = "/%s/";

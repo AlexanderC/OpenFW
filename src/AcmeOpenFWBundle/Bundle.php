@@ -9,6 +9,9 @@ namespace AcmeOpenFWBundle;
 
 
 use OpenFW\Constants;
+use OpenFW\Events\Event;
+use OpenFW\Events\Eventer;
+use OpenFW\Events\Matchers\BinaryMatcher;
 use OpenFW\Routing\Router;
 use OpenFW\Routing\Validator\RegexValidator;
 use OpenFW\Traits\Bundle as MainBundle;
@@ -36,6 +39,13 @@ class Bundle
         $router->addRoute("home", "/", function() use ($router) {
             return Router::createRedirectResponse(
                 $router->getRoute('hello_route')->generate(['name' => 'Alex'])
+            );
+        });
+
+        // case controller not found (404 error page)
+        $router->setDefaultController(function() {
+            return Router::createResponse(
+                "<h1>Page Not Found</h1>"
             );
         });
     }
