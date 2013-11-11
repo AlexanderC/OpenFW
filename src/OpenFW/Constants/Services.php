@@ -15,5 +15,4 @@ interface Services
     const EVENTS_SERVICE = 'events';
     const CONFIGURATION_SERVICE = 'configurator';
     const BUNDLES_SERVICE = 'bundles';
-    const CACHE_SERVICE = 'cache';
 } 
