@@ -9,8 +9,8 @@ namespace AcmeOpenFWBundle;
 
 
 use OpenFW\Constants;
-use OpenFW\Routing\Route;
 use OpenFW\Routing\Router;
+use OpenFW\Routing\Validator\RegexValidator;
 use OpenFW\Traits\Bundle as MainBundle;
 use OpenFW\Traits\ContainerAware;
 
@@ -27,15 +27,15 @@ class Bundle
     public function init()
     {
         /** @var Router $router */
-        $router = $this->container[Constants::ROUTING_SERVICE];
+        $router = $this->container['router'];
 
         $router->addRoute("hello_route", "/{name}", function($name) {
             return Router::createResponse("Hello {$name}");
-        })->setValidator('name', '\w+');
+        })->addValidator('name', new RegexValidator('\w+'));
 
-        $router->addRoute("home", "/", function() {
+        $router->addRoute("home", "/", function() use ($router) {
             return Router::createRedirectResponse(
-                $this->container['router']->getRoute('hello_route')->generate(['name' => 'Alex'])
+                $router->getRoute('hello_route')->generate(['name' => 'Alex'])
             );
         });
     }

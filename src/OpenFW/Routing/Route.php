@@ -7,6 +7,9 @@
 
 namespace OpenFW\Routing;
 
+
+use OpenFW\Routing\Validator\AbstractValidator;
+
 /**
  * Class Route
  * @package OpenFW\Routing
@@ -65,9 +68,23 @@ class Route
     /**
      * @return array
      */
-    public function getValidators()
+    public function getValidatorsAll()
     {
         return $this->validators;
+    }
+
+    /**
+     * @param string $parameter
+     * @return bool
+     * @throws \RuntimeException
+     */
+    public function hasValidators($parameter)
+    {
+        if(!$this->hasParameter($parameter)) {
+            throw new \RuntimeException("Parameter {$parameter} does not exists.");
+        }
+
+        return array_key_exists($parameter, $this->validators);
     }
 
     /**
@@ -75,10 +92,12 @@ class Route
      * @return string
      * @throws \RuntimeException
      */
-    public function getValidator($parameter)
+    public function getValidators($parameter)
     {
         if(!$this->hasParameter($parameter)) {
             throw new \RuntimeException("Parameter {$parameter} does not exists.");
+        } elseif(!$this->hasValidators($parameter)) {
+            throw new \RuntimeException("Parameter {$parameter} does not have any validators.");
         }
 
         return $this->validators[$parameter];
@@ -86,17 +105,34 @@ class Route
 
     /**
      * @param string $parameter
-     * @param string $validator
-     * @return $this
      * @throws \RuntimeException
      */
-    public function setValidator($parameter, $validator)
+    public function flushValidators($parameter)
     {
         if(!$this->hasParameter($parameter)) {
             throw new \RuntimeException("Parameter {$parameter} does not exists.");
+        } elseif(!$this->hasValidators($parameter)) {
+            throw new \RuntimeException("Parameter {$parameter} does not have any validators.");
         }
 
-        $this->validators[$parameter] = $validator;
+        unset($this->validators[$parameter]);
+    }
+
+    /**
+     * @param string $parameter
+     * @param AbstractValidator $validator
+     * @return $this
+     * @throws \RuntimeException
+     */
+    public function addValidator($parameter, AbstractValidator $validator)
+    {
+        if(!$this->hasParameter($parameter)) {
+            throw new \RuntimeException("Parameter {$parameter} does not exists.");
+        } elseif(!$this->hasValidators($parameter)) {
+            $this->validators[$parameter] = [];
+        }
+
+        $this->validators[$parameter][] = $validator;
 
         return $this;
     }
@@ -161,11 +197,17 @@ class Route
             );
         }
 
-        foreach($this->validators as $name => $validator) {
-            if(!preg_match(sprintf(self::REGEX_TPL, $validator), $parameters[$name])) {
-                throw new \RuntimeException(
-                    sprintf("Unable to validate '%s' using '%s'", $name, $validator)
-                );
+        foreach($this->validators as $name => $validators) {
+            /** @var $validator AbstractValidator */
+            foreach($validators as $validator) {
+                if(!$validator->validate($parameters[$name])) {
+                    throw new \RuntimeException(
+                        sprintf(
+                            "Unable to validate '%s' using %s('%s')",
+                            $name, get_class($validator), $validator->getExpression()
+                        )
+                    );
+                }
             }
         }
 
@@ -185,13 +227,19 @@ class Route
             preg_match_all($this->matchRegex, $path, $matches);
 
             foreach($this->parameters as $parameter) {
-                if(isset($this->validators[$parameter])
-                    && !preg_match(sprintf(self::REGEX_TPL, $this->validators[$parameter]), $matches[$parameter][0])) {
-                    $parameters = [];
-                    return false;
+                $parameterValue = $matches[$parameter][0];
+
+                if(isset($this->validators[$parameter])) {
+                    /** @var $validator AbstractValidator */
+                    foreach($this->validators[$parameter] as $validator) {
+                        if(!$validator->validate($parameterValue)) {
+                            $parameters = [];
+                            return false;
+                        }
+                    }
                 }
 
-                $parameters[$parameter] = $matches[$parameter][0];
+                $parameters[$parameter] = $parameterValue;
             }
         }
 
@@ -234,12 +282,4 @@ class Route
         }
         return $ordered + $array;
     }
-
-    /**
-     * @return array
-     */
-    /*public function __sleep()
-    {
-        return ['expression', 'parameters', 'matchRegex', 'reversedTemplate', 'validators'];
-    }*/
 } 
