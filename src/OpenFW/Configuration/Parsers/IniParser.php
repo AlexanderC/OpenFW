@@ -38,7 +38,7 @@ class IniParser extends AbstractParser
         $file = $this->getCacheFileName();
 
         if(is_file($file)) {
-            return @include($file);
+            return require($file);
         }
 
         return false;
