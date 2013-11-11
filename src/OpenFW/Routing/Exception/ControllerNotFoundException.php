@@ -9,4 +9,5 @@ namespace OpenFW\Routing\Exception;
 
 
 class ControllerNotFoundException extends \RuntimeException
-{   }
+{
+}

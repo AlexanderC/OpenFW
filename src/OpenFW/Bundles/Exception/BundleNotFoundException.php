@@ -9,4 +9,5 @@ namespace OpenFW\Bundles\Exception;
 
 
 class BundleNotFoundException extends \RuntimeException
-{   }
+{
+}

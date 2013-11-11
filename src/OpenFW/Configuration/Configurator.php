@@ -49,7 +49,7 @@ class Configurator
     }
 
     /**
-     * @param string  $directory
+     * @param string $directory
      * @return Configurator
      */
     public function createNew($directory)

@@ -15,7 +15,8 @@ class CheckInstallation
     const CHECK_REGEXP = '#^check.+$#ui';
 
     public function __construct()
-    {   }
+    {
+    }
 
     /**
      * @throws \RuntimeException

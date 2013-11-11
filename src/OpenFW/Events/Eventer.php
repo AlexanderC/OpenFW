@@ -138,6 +138,7 @@ class Eventer
     {
         $queue = new \SplPriorityQueue();
         $queue->setExtractFlags(\SplPriorityQueue::EXTR_DATA);
+
         return $queue;
     }
 } 

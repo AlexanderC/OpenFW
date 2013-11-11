@@ -9,4 +9,5 @@ namespace OpenFW\Exception;
 
 
 class ConfigurationException extends \RuntimeException
-{   }
+{
+}

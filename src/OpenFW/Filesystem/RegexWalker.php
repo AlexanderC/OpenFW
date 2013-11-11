@@ -53,8 +53,8 @@ class RegexWalker
     public function __construct(
         $root, $regex = self::REGEX_ANY,
         $delimiter = self::DEFAULT_DELIMITER,
-        $flags = self::DEFAULT_FLAGS)
-    {
+        $flags = self::DEFAULT_FLAGS
+    ) {
         $this->root = $root;
         $this->rawRegex = $regex;
         $this->delimiter = $delimiter;
@@ -87,7 +87,8 @@ class RegexWalker
                     || (($flags & self::IT_FILES) && $file->isFile())
                     || (($flags & self::IT_FOLDERS) && $file->isDir())
                     || (($flags & self::IT_LINKS) && $file->isLink())
-                )) {
+                )
+            ) {
                 yield $file;
             }
         }

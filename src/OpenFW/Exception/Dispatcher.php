@@ -30,7 +30,7 @@ class Dispatcher
      */
     public function __construct($debug)
     {
-        $this->debug = (bool)$debug;
+        $this->debug = (bool) $debug;
     }
 
     /**
@@ -38,27 +38,31 @@ class Dispatcher
      */
     public function register()
     {
-        if (true === $this->debug) {
-            if (class_exists('Whoops\Run')) {
+        if(true === $this->debug) {
+            if(class_exists('Whoops\Run')) {
                 $run = new Run();
 
                 // Set handler that would trigger runtime exception event
-                $run->pushHandler(new CallbackHandler(function (\Exception $exception) {
-                    $this->container[Constants::EVENTS_SERVICE]
-                        ->trigger(Constants::ON_RUNTIME_EXCEPTION_EVENT, [$exception, $this->container]);
-                }));
+                $run->pushHandler(
+                    new CallbackHandler(function (\Exception $exception) {
+                        $this->container[Constants::EVENTS_SERVICE]
+                            ->trigger(Constants::ON_RUNTIME_EXCEPTION_EVENT, [$exception, $this->container]);
+                    })
+                );
 
                 // Set exception output handler when CLI environment detected.
                 // Do this because page handler does not output anything
-                if ($this->container[Constants::ENVIRONMENT_SERVICE]->isCli()) {
-                    $run->pushHandler(new CallbackHandler(function (\Exception $exception) {
-                        @ob_end_clean();
-                        @ob_implicit_flush(1);
-                        exit(sprintf(
-                            self::CLI_EXCEPTION_TPL,
-                            $exception->getMessage(), $this->prettifyException($exception)
-                        ));
-                    }));
+                if($this->container[Constants::ENVIRONMENT_SERVICE]->isCli()) {
+                    $run->pushHandler(
+                        new CallbackHandler(function (\Exception $exception) {
+                            @ob_end_clean();
+                            @ob_implicit_flush(1);
+                            exit(sprintf(
+                                self::CLI_EXCEPTION_TPL,
+                                $exception->getMessage(), $this->prettifyException($exception)
+                            ));
+                        })
+                    );
                 }
 
                 // Set page handler for output prettified exception in non CLI environment
@@ -87,57 +91,57 @@ class Dispatcher
      * @param string $errFile
      * @param int $errLine
      * @param array $errContext
-     * @throws UserErrorException
-     * @throws NoticeException
-     * @throws ParseException
-     * @throws CompileErrorException
-     * @throws UserNoticeException
-     * @throws UserDeprecatedException
-     * @throws ErrorException
-     * @throws StrictException
-     * @throws CoreErrorException
-     * @throws CoreWarningException
-     * @throws RecoverableErrorException
-     * @throws UserWarningException
-     * @throws DeprecatedException
-     * @throws WarningException
+     * @throws Error\WarningException
+     * @throws Error\CompileErrorException
+     * @throws Error\ErrorException
+     * @throws Error\CoreErrorException
+     * @throws Error\UserNoticeException
+     * @throws Error\CoreWarningException
+     * @throws Error\UserErrorException
+     * @throws Error\UserWarningException
+     * @throws Error\ParseException
+     * @throws Error\NoticeException
+     * @throws Error\RecoverableErrorException
+     * @throws Error\UserDeprecatedException
+     * @throws Error\DeprecatedException
+     * @throws Error\StrictException
      */
-    public function errorHandler($errSeverity, $errMsg, $errFile, $errLine, array $errContext)
+    public function errorHandler($errSeverity, $errMsg, $errFile, $errLine, array $errContext = [])
     {
         // check if error severity exists
         // in reporting level
-        if (error_reporting() & $errSeverity) {
-            switch ($errSeverity) {
+        if(error_reporting() & $errSeverity) {
+            switch($errSeverity) {
                 case E_ERROR:
-                    throw new ErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\ErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_WARNING:
-                    throw new WarningException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\WarningException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_PARSE:
-                    throw new ParseException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\ParseException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_NOTICE:
-                    throw new NoticeException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\NoticeException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_CORE_ERROR:
-                    throw new CoreErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\CoreErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_CORE_WARNING:
-                    throw new CoreWarningException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\CoreWarningException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_COMPILE_ERROR:
-                    throw new CompileErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\CompileErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_COMPILE_WARNING:
-                    throw new CoreWarningException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\CoreWarningException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_USER_ERROR:
-                    throw new UserErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\UserErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_USER_WARNING:
-                    throw new UserWarningException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\UserWarningException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_USER_NOTICE:
-                    throw new UserNoticeException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\UserNoticeException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_STRICT:
-                    throw new StrictException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\StrictException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_RECOVERABLE_ERROR:
-                    throw new RecoverableErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\RecoverableErrorException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_DEPRECATED:
-                    throw new DeprecatedException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\DeprecatedException($errMsg, 0, $errSeverity, $errFile, $errLine);
                 case E_USER_DEPRECATED:
-                    throw new UserDeprecatedException($errMsg, 0, $errSeverity, $errFile, $errLine);
+                    throw new Error\UserDeprecatedException($errMsg, 0, $errSeverity, $errFile, $errLine);
             }
         }
     }
@@ -147,18 +151,18 @@ class Dispatcher
      */
     public function shutdownHandler()
     {
-        if ($error = error_get_last()) {
+        if($error = error_get_last()) {
 
-            if (
+            if(
             in_array(
                 $error['type'],
                 array(
-                    E_ERROR,
-                    E_PARSE,
-                    E_CORE_ERROR,
-                    E_CORE_WARNING,
-                    E_COMPILE_ERROR,
-                    E_COMPILE_WARNING
+                     E_ERROR,
+                     E_PARSE,
+                     E_CORE_ERROR,
+                     E_CORE_WARNING,
+                     E_COMPILE_ERROR,
+                     E_COMPILE_WARNING
                 )
             )
             ) {
@@ -166,8 +170,7 @@ class Dispatcher
                     $error['type'],
                     $error['message'],
                     $error['file'],
-                    $error['line'],
-                    []
+                    $error['line']
                 );
             }
         }
@@ -184,7 +187,7 @@ class Dispatcher
         $header = "HTTP/1.0 500 Internal Server Error";
 
         // on 404 error
-        if ($e instanceof ControllerNotFoundException) {
+        if($e instanceof ControllerNotFoundException) {
             $header = "HTTP/1.0 404 Not Found";
         }
 
@@ -229,7 +232,7 @@ class Dispatcher
 
         // alter your trace as you please, here
         $trace = $exception->getTrace();
-        foreach ($trace as $key => $stackPoint) {
+        foreach($trace as $key => $stackPoint) {
             // I'm converting arguments to their type
             // (prevents passwords from ever getting logged as anything other than 'string')
             $trace[$key]['args'] = array_map('gettype', $trace[$key]['args']);
@@ -238,7 +241,7 @@ class Dispatcher
         // build your tracelines
         $result = array();
 
-        foreach ($trace as $key => $stackPoint) {
+        foreach($trace as $key => $stackPoint) {
             $stackPoint['file'] = isset($stackPoint['file']) ? $stackPoint['file'] : "Unavailable";
             $stackPoint['line'] = isset($stackPoint['line']) ? $stackPoint['line'] : "NaN";
             $stackPoint['function'] = isset($stackPoint['function']) ? $stackPoint['function'] : "Unavailable";
@@ -270,62 +273,4 @@ class Dispatcher
 
         return $msg;
     }
-}
-
-// ... keep it here instead of wasting resources by defining this
-// in separate files as is described in PSR
-class WarningException extends \ErrorException
-{
-}
-
-class ParseException extends \ErrorException
-{
-}
-
-class NoticeException extends \ErrorException
-{
-}
-
-class CoreErrorException extends \ErrorException
-{
-}
-
-class CoreWarningException extends \ErrorException
-{
-}
-
-class CompileErrorException extends \ErrorException
-{
-}
-
-class CompileWarningException extends \ErrorException
-{
-}
-
-class UserErrorException extends \ErrorException
-{
-}
-
-class UserWarningException extends \ErrorException
-{
-}
-
-class UserNoticeException extends \ErrorException
-{
-}
-
-class StrictException extends \ErrorException
-{
-}
-
-class RecoverableErrorException extends \ErrorException
-{
-}
-
-class DeprecatedException extends \ErrorException
-{
-}
-
-class UserDeprecatedException extends \ErrorException
-{
 }

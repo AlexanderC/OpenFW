@@ -30,22 +30,28 @@ class Bundle
         /** @var Router $router */
         $router = $this->container['router'];
 
-        $router->addRoute("hello_route", "/{name}", function($name) {
-            return Router::createResponse("Hello {$name}");
-        })->addValidator('name', new RegexValidator('\w+'));
+        $router->addRoute(
+            "hello_route", "/{name}", function ($name) {
+                return Router::createResponse("Hello {$name}");
+            }
+        )->addValidator('name', new RegexValidator('\w+'));
 
-        $router->addRoute("home", "/", function() use ($router) {
-            return Router::createRedirectResponse(
-                $router->getRoute('hello_route')->generate(['name' => 'Alex'])
-            );
-        });
+        $router->addRoute(
+            "home", "/", function () use ($router) {
+                return Router::createRedirectResponse(
+                    $router->getRoute('hello_route')->generate(['name' => 'Alex'])
+                );
+            }
+        );
 
         // case controller not found (404 error page)
-        $router->setDefaultController(function() {
-            return Router::createResponse(
-                "<h1>Page Not Found</h1>"
-            );
-        });
+        $router->setDefaultController(
+            function () {
+                return Router::createResponse(
+                    "<h1>Page Not Found</h1>"
+                );
+            }
+        );
     }
 
     public function init()

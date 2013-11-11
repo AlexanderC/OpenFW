@@ -193,14 +193,15 @@ class Application
                 $instance->initLazy();
 
                 $this->container[$bundle['name']] = $this->container->share(
-                    function($container) use ($bundle, $instance) {
+                    function ($container) use ($bundle, $instance) {
                         $instance->init();
                         $container[Constants::EVENTS_SERVICE]->trigger(
                             Constants::AFTER_BUNDLE_INIT_EVENT, [$bundle, $instance, $this->container]
                         );
 
                         return $instance;
-                });
+                    }
+                );
             } else {
                 $instance->init();
                 $this->eventer->trigger(Constants::AFTER_BUNDLE_INIT_EVENT, [$bundle, $instance, $this->container]);

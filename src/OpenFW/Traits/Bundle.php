@@ -16,7 +16,8 @@ trait Bundle
      *
      * @throws \RuntimeException
      */
-    public function checkEnvironment() {
+    public function checkEnvironment()
+    {
         throw new \RuntimeException("You must implement checkEnvironment method");
     }
 
@@ -35,7 +36,8 @@ trait Bundle
      *
      * @throws \RuntimeException
      */
-    public function init() {
+    public function init()
+    {
         throw new \RuntimeException("You must implement init method");
     }
 }

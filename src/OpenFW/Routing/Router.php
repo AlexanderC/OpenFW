@@ -106,10 +106,10 @@ class Router
             }
         }
 
+        // set default controller if no matches and default exists
         $controller = (false === $controller && is_callable($this->defaultController))
             ? $this->defaultController
-            : $controller
-        ;
+            : $controller;
 
         if(false === $controller) {
             throw new ControllerNotFoundException("Controller not found.");

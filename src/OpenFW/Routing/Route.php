@@ -172,6 +172,7 @@ class Route
     public function setController(callable $controller)
     {
         $this->controller = $controller;
+
         return $this;
     }
 
@@ -235,6 +236,7 @@ class Route
                     foreach($this->validators[$parameter] as $validator) {
                         if(!$validator->validate($parameterValue)) {
                             $parameters = [];
+
                             return false;
                         }
                     }
@@ -273,7 +275,8 @@ class Route
      * @param array $orderArray
      * @return array
      */
-    protected function sortArrayByArray(array $array, array $orderArray) {
+    protected function sortArrayByArray(array $array, array $orderArray)
+    {
         $ordered = array();
         foreach($orderArray as $key) {
             if(array_key_exists($key, $array)) {
@@ -281,6 +284,7 @@ class Route
                 unset($array[$key]);
             }
         }
+
         return $ordered + $array;
     }
 } 
