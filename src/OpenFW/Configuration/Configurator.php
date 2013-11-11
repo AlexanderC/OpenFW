@@ -56,13 +56,13 @@ class Configurator
                 if(preg_match(sprintf("#%s$#ui", $parserSuffix), $file->getFilename())) {
                     $parserClass = $this->buildParserClassName($parserName);
 
-                    // check if environment exists
                     $config = array_merge_recursive($config, (new $parserClass($file->getRealPath()))->parseConfig());
                     break;
                 }
             }
         }
 
+        // check if environment exists
         if(!isset($config[$this->environment])) {
             throw new \RuntimeException("Unable to find configuration for {$this->environment} environment");
         }
