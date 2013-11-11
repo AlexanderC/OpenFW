@@ -9,6 +9,7 @@ namespace AcmeOpenFWBundle;
 
 
 use OpenFW\Constants;
+
 use OpenFW\Routing\Router;
 use OpenFW\Routing\Validator\RegexValidator;
 use OpenFW\Traits\Bundle as MainBundle;
