@@ -24,7 +24,7 @@ class Bundle
         // check environment
     }
 
-    public function init()
+    public function initLazy()
     {
         /** @var Router $router */
         $router = $this->container['router'];
@@ -38,5 +38,10 @@ class Bundle
                 $router->getRoute('hello_route')->generate(['name' => 'Alex'])
             );
         });
+    }
+
+    public function init()
+    {
+        // do some heavy stuff
     }
 } 

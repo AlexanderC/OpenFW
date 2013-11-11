@@ -21,6 +21,16 @@ trait Bundle
     }
 
     /**
+     * Initialize bundle lazy mode first
+     *
+     * @throws \RuntimeException
+     */
+    public function initLazy()
+    {
+        throw new \RuntimeException("You must implement initLazy method");
+    }
+
+    /**
      * Initialize bundle
      *
      * @throws \RuntimeException

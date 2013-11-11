@@ -190,6 +190,8 @@ class Application
             }
 
             if(true === $bundle['lazy']) {
+                $instance->initLazy();
+
                 $this->container[$bundle['name']] = $this->container->share(
                     function($container) use ($bundle, $instance) {
                         $instance->init();
