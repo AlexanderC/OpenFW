@@ -23,10 +23,8 @@ class Bundle
     use ContainerAware;
     use ConfigurableBundle;
 
-    const DEFAULT_IT_REGEX = ".*\\.(php|ini|yml|yaml|xliff)";
     const TRANSLATOR_CLASS = "Symfony\\Component\\Translation\\Translator";
     const TRANSLATIONS_PATH_TPL = "%s/translations";
-    const LOCALE_FILE_REGEX = '#^.*\.(?<locale>[^\.]+)\.[a-z]{3,4}$#u';
 
     /**
      * @var \Symfony\Component\Translation\Translator
