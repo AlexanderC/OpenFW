@@ -272,4 +272,4 @@ class Application
     {
         return $this->router;
     }
-} 
+}
