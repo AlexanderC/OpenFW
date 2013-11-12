@@ -8,13 +8,13 @@
 namespace OpenFW\Configuration\Parsers;
 
 
-class IniParser extends CachableAbstractParser
+class YamlParser extends CachableAbstractParser
 {
     /**
      * @return array
      */
     protected function __parseInternal()
     {
-        return parse_ini_file($this->file, true);
+        return \Spyc::YAMLLoad($this->file);
     }
 }

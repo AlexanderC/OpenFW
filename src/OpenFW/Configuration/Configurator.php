@@ -13,14 +13,16 @@ use OpenFW\Filesystem\RegexWalker;
 
 class Configurator
 {
-    const DEFAULT_IT_REGEX = ".*\\.(php|ini)";
+    const DEFAULT_IT_REGEX = ".*\\.(php|ini|yml|yaml)";
 
     /**
      * @var array
      */
     protected $parsers = [
         'php' => 'native',
-        'ini' => 'ini'
+        'ini' => 'ini',
+        'yml' => 'yaml',
+        'yaml' => 'yaml',
     ];
 
     /**
