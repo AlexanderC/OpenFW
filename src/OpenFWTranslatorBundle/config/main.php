@@ -7,9 +7,9 @@
 
 return [
     'dev' => [
-
+        'fallback' => 'en'
     ],
     'prod' => [
-
+        'fallback' => 'en'
     ]
 ];

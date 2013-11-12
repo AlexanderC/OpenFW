@@ -12,7 +12,7 @@ use OpenFW\Constants;
 
 abstract class CachableAbstractParser extends AbstractParser
 {
-    const DUMP_TPL = "<?php\n /** @time %s */\n\n return [\n%s\n];";
+    const DUMP_TPL = "<?php\n /** @time %s */\n\n return \n%s\n;";
 
     /**
      * @return array

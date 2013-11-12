@@ -8,15 +8,15 @@
 namespace OpenFWTranslatorBundle;
 
 
-use OpenFW\Constants;
-use OpenFW\Events\Event;
-use OpenFW\Events\Eventer;
-use OpenFW\Events\Matchers\BinaryMatcher;
+use OpenFW\Configuration\RawConfigurator;
 use OpenFW\Exception\ConfigurationException;
+use OpenFW\Filesystem\RegexWalker;
 use OpenFW\Traits\Bundle as MainBundle;
 use OpenFW\Traits\ConfigurableBundle;
 use OpenFW\Traits\ContainerAware;
-use Monolog\Logger;
+use Symfony\Component\Translation\Loader\ArrayLoader;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\MessageSelector;
 
 class Bundle
 {
@@ -24,12 +24,15 @@ class Bundle
     use ContainerAware;
     use ConfigurableBundle;
 
-    const TRANSLATOR_CLASS = "Monolog\\Logger";
+    const DEFAULT_IT_REGEX = ".*\\.(php|ini|yml|yaml|xliff)";
+    const TRANSLATOR_CLASS = "Symfony\\Component\\Translation\\Translator";
+    const TRANSLATIONS_PATH_TPL = "%s/translations";
+    const LOCALE_FILE_REGEX = '#^.*\.(?<locale>[^\.]+)\.[a-z]{3,4}$#u';
 
     /**
-     * @var array
+     * @var \Symfony\Component\Translation\Translator
      */
-    protected $loggers = [];
+    protected $translator;
 
     /**
      * This would be used basically to
@@ -48,20 +51,24 @@ class Bundle
      */
     public function checkEnvironment()
     {
-        /*if(!class_exists(self::LOGGER_CLASS)) {
-            throw new \RuntimeException("Unable to find logger class. Please install 'monolog/monolog'.");
+        if(!class_exists(self::TRANSLATOR_CLASS)) {
+            throw new \RuntimeException("Unable to find translator class. Please install 'symfony/translation'.");
         }
 
-        if(!isset($this->config['channels']) || !is_array($this->config['channels'])) {
-            throw new ConfigurationException("Missing 'channels' section or wrong format.");
-        }*/
+        if(!isset($this->config['fallback'])) {
+            throw new ConfigurationException("Missing 'fallback' section.");
+        }
+
+        if(!is_dir($this->getTranslationsPath())) {
+            throw new ConfigurationException("Unable to find translations path.");
+        }
     }
 
     /**
      * @return void
      */
     public function initLazy()
-    {return;
+    {
         $this->init();
     }
 
@@ -69,7 +76,7 @@ class Bundle
      * @throws \OpenFW\Exception\ConfigurationException
      */
     public function init()
-    {return;
+    {
         static $once = false;
 
         if(true === $once) {
@@ -78,94 +85,53 @@ class Bundle
             $once = true;
         }
 
-        foreach($this->config['channels'] as $channel => $handlers) {
-            $this->loggers[$channel] = new Logger($channel);
+        $this->translator = new Translator(null, new MessageSelector());
 
-            if(!is_array($handlers)) {
-                throw new ConfigurationException("Channel handlers should be an array.");
-            }
+        $this->translator->setFallbackLocale($this->config['fallback']);
 
-            foreach($handlers as $handler) {
-                $this->loggers[$channel]->pushHandler($handler);
+        $this->translator->addLoader('array', new ArrayLoader());
+
+        $configurator = RawConfigurator::create($this->getTranslationsPath());
+        $configurator->parse();
+
+        $config = $configurator->getConfig();
+
+        // load locales from config
+        if(is_array($config)) {
+            foreach($config as $locale => $dictionary) {
+                $this->translator->addResource('array', $dictionary, $locale);
             }
         }
-
-        /** @var $eventer Eventer */
-        $eventer = $this->container[Constants::EVENTS_SERVICE];
-
-        $eventer->addListener(new BinaryMatcher(Constants::ON_RUNTIME_EXCEPTION_EVENT),
-            function(Event $event) {
-                $exception = $event->getData()[0];
-
-                $method = 'addError';
-
-                if($exception instanceof \ErrorException) {
-                    $class = get_class($exception);
-
-                    if(false !== stripos($class, 'compileError') || false !== stripos($class, 'coreError')) {
-                        $method = 'addCritical';
-                    } elseif(false !== stripos($class, 'warning')) {
-                        $method = 'addWarning';
-                    } elseif(false !== stripos($class, 'notice')) {
-                        $method = 'addNotice';
-                    } elseif(false !== stripos($class, 'deprecated') || false !== stripos($class, 'strict')) {
-                        $method = 'addAlert';
-                    }
-                }
-
-                /** @var $logger Logger */
-                foreach($this->loggers as $logger) {
-                    call_user_func([$logger, $method], $exception->getMessage(), $event->getData());
-                }
-            });
     }
 
     /**
-     * @return array
+     * @return Translator
      */
-    public function getLoggers()
+    public function getTranslator()
     {
-        return $this->loggers;
-    }
-
-    /**
-     * @param string $name
-     * @return Logger
-     * @throws \OutOfBoundsException
-     */
-    public function getLogger($name)
-    {
-        if(!$this->isLogger($name)) {
-            throw new \OutOfBoundsException("Logger channel {$name} does not exists.");
-        }
-
-        return $this->loggers[$name];
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function isLogger($name)
-    {
-        return isset($this->loggers[$name]);
+        return $this->translator;
     }
 
     /**
      * @param string $method
      * @param array $arguments
      * @throws \RuntimeException
+     * @return mixed
      */
     public function __call($method, array $arguments)
     {
-        if(method_exists(self::LOGGER_CLASS, $method)) {
-            /** @var $logger Logger */
-            foreach($this->loggers as $logger) {
-                call_user_func_array([$logger, $method], $arguments);
-            }
-            return;
+        if(method_exists(self::TRANSLATOR_CLASS, $method)) {
+            return call_user_func_array([$this->translator, $method], $arguments);
         }
 
         throw new \RuntimeException("Method {$method} does not exists.");
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTranslationsPath()
+    {
+        return sprintf(self::TRANSLATIONS_PATH_TPL, __DIR__);
     }
 } 
