@@ -10,7 +10,6 @@ namespace OpenFWTranslatorBundle;
 
 use OpenFW\Configuration\RawConfigurator;
 use OpenFW\Exception\ConfigurationException;
-use OpenFW\Filesystem\RegexWalker;
 use OpenFW\Traits\Bundle as MainBundle;
 use OpenFW\Traits\ConfigurableBundle;
 use OpenFW\Traits\ContainerAware;
@@ -102,6 +101,27 @@ class Bundle
                 $this->translator->addResource('array', $dictionary, $locale);
             }
         }
+    }
+
+    /**
+     * @param string $id
+     * @param string|null $locale
+     * @return string
+     */
+    public function trans($id, $locale = null)
+    {
+        return $this->translator->trans($id, [], 'messages', $locale ? : $this->config['fallback']);
+    }
+
+    /**
+     * @param string $id
+     * @param int $number
+     * @param null|string $locale
+     * @return string
+     */
+    public function transChoice($id, $number, $locale = null)
+    {
+        return $this->translator->transChoice($id, $number, [], 'messages', $locale ? : $this->config['fallback']);
     }
 
     /**

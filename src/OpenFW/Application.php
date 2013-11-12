@@ -107,8 +107,6 @@ class Application
         // init bundles manager and available bundles
         $this->bundles = new BundlesManager($this->container[Constants::CONFIGURATION_CONTAINER]['bundles']);
         $this->initBundles();
-
-        exit($this->container['translator']->trans('hello', [], null, 'ru'));
     }
 
     /**
