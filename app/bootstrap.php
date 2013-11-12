@@ -8,8 +8,6 @@
 $app = call_user_func(function() {
     define('OPENFW_ROOT', realpath(__DIR__ . '/../'));
 
-    error_reporting(E_ALL);
-
     $autoloadFile = OPENFW_ROOT . '/vendor/autoload.php';
 
     if(!is_file($autoloadFile)) {
