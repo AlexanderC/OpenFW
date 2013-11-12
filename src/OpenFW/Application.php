@@ -101,8 +101,10 @@ class Application
         $exceptionDispatcher->setContainer($this->container);
         $exceptionDispatcher->register();
 
-        // init console application
-        $this->console = new ConsoleApplication(Constants::APP_NAME, Constants::APP_VERSION);
+        // init console application only when CLI env
+        if($this->env->isCli()) {
+            $this->console = new ConsoleApplication(Constants::APP_NAME, Constants::APP_VERSION);
+        }
 
         // init bundles manager and available bundles
         $this->bundles = new BundlesManager($this->container[Constants::CONFIGURATION_CONTAINER]['bundles']);

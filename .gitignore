@@ -1,3 +1,4 @@
+web/xhprof_html
 composer.lock
 composer.phar
 vendor/*
