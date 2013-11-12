@@ -24,6 +24,8 @@ class Bundle
     use ContainerAware;
     use ConfigurableBundle;
 
+    const LOGGER_CLASS = "Monolog\\Logger";
+
     /**
      * @var array
      */
@@ -46,7 +48,7 @@ class Bundle
      */
     public function checkEnvironment()
     {
-        if(!class_exists("Monolog\\Logger")) {
+        if(!class_exists(self::LOGGER_CLASS)) {
             throw new \RuntimeException("Unable to find logger class. Please install 'monolog/monolog'.");
         }
 
@@ -147,5 +149,23 @@ class Bundle
     public function isLogger($name)
     {
         return isset($this->loggers[$name]);
+    }
+
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @throws \RuntimeException
+     */
+    public function __call($method, array $arguments)
+    {
+        if(method_exists(self::LOGGER_CLASS, $method)) {
+            /** @var $logger Logger */
+            foreach($this->loggers as $logger) {
+                call_user_func_array([$logger, $method], $arguments);
+            }
+            return;
+        }
+
+        throw new \RuntimeException("Method {$method} does not exists.");
     }
 } 
