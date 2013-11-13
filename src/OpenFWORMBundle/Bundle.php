@@ -10,7 +10,7 @@ namespace OpenFWORMBundle;
 
 use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Cache\PhpFileCache;
+use Doctrine\Common\Cache\FilesystemCache;
 use OpenFW\Constants;
 use OpenFW\Exception\ConfigurationException;
 use OpenFW\Traits\Bundle as MainBundle;
@@ -101,15 +101,16 @@ class Bundle
             }
 
             $cacheDir = Constants::getResolvedPath(Constants::CACHE_DIR);
+            $proxiesPath = sprintf(self::PROXY_PATH_TPL, $cacheDir);
 
             // create configuration
             $setup = Setup::createAnnotationMetadataConfiguration(
                 $paths, // entities paths
                 $isDev, // dev mode flag
-                sprintf(self::PROXY_PATH_TPL, $cacheDir), // proxy cache path
+                $proxiesPath, // proxy classes cache path
                 (isset($config['cache']) && $config['cache'] instanceof Cache) // cache instance
-                    ? $config['cache'] // set setup or
-                    : (function_exists('apc_add') ? new ApcCache() : new PhpFileCache($cacheDir)) // set apc or file
+                    ? $config['cache'] // set setup or set apc or file
+                    : (function_exists('apc_add') ? new ApcCache() : new FilesystemCache($cacheDir))
             );
 
             // add manager instance
