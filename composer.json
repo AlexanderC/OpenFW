@@ -24,6 +24,7 @@
         "filp/whoops": "1.*",
 
         "monolog/monolog": "1.6.*@dev",
-        "symfony/translation": "2.2.*@dev"
+        "symfony/translation": "2.2.*@dev",
+        "doctrine/orm": "2.3.4"
     }
 }

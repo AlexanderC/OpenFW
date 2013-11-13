@@ -16,6 +16,9 @@ return [
             ],
             'translator' => [
                 'class' => "OpenFWTranslatorBundle\\Bundle",
+            ],
+            'orm' => [
+                'class' => "OpenFWORMBundle\\Bundle",
             ]
         ]
     ],
@@ -29,6 +32,9 @@ return [
             ],
             'translator' => [
                 'class' => "OpenFWTranslatorBundle\\Bundle",
+            ],
+            'orm' => [
+                'class' => "OpenFWORMBundle\\Bundle",
             ]
         ]
     ]
