@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -z "$1" ] || [ -z "$2" ]
+then
+    echo "
+    Script usage example: ./tagadd \"tag add message\" v1.0.0-alpha
+    "
+else
+    git tag -a"$1" -m"$2"
+    git push origin --tags
+fi

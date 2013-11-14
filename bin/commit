@@ -1,7 +1,5 @@
 #!/bin/bash
 
-GIT_BRANCH=$2;
-
 if [ -z "$1" ]
 then
     echo "
