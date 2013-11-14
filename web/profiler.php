@@ -68,6 +68,12 @@ if(function_exists('xhprof_enable')) {
                     mkdir($cacheDir, 0777, true);
                 }
 
+                $maxRuns = 50;
+
+                if(count($runs) > $maxRuns) {
+                    $runs = array_slice($runs, -$maxRuns);
+                }
+
                 file_put_contents(
                     $profilerRunsFile, sprintf("<?php return %s;", var_export($runs, true)), LOCK_EX | LOCK_NB
                 );

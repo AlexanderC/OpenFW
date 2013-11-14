@@ -14,13 +14,13 @@ if(true === ($isLocal = in_array($_SERVER['REMOTE_ADDR'], ['127.0.0.1', "::1"]))
 $apacheEnv = function_exists('apache_getenv') ? apache_getenv('OPENFW_ENV') : false;
 define('OPENFW_ENV', $apacheEnv ? : 'dev');
 
-require __DIR__ . "/../app/bootstrap.php";
-
 // always enable errors reporting
 // when developer connected
 if($isLocal) {
     error_reporting(E_ALL);
 }
+
+require __DIR__ . "/../app/bootstrap.php";
 
 $app->run()->send();
 
