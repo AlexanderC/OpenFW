@@ -25,6 +25,7 @@
 
         "monolog/monolog": "1.6.*@dev",
         "symfony/translation": "2.2.*@dev",
-        "doctrine/orm": "2.3.4"
+        "doctrine/orm": "2.3.4",
+        "twig/twig": "1.15.*@dev"
     }
 }

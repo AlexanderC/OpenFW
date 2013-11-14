@@ -19,6 +19,9 @@ return [
             ],
             'orm' => [
                 'class' => "OpenFWORMBundle\\Bundle",
+            ],
+            'twig' => [
+                'class' => "OpenFWTwigBundle\\Bundle"
             ]
         ]
     ],
@@ -35,6 +38,9 @@ return [
             ],
             'orm' => [
                 'class' => "OpenFWORMBundle\\Bundle",
+            ],
+            'twig' => [
+                'class' => "OpenFWTwigBundle\\Bundle"
             ]
         ]
     ]

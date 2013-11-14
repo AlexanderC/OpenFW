@@ -48,6 +48,7 @@ class Bundle
 
     /**
      * @throws \RuntimeException
+     * @throws ConfigurationException
      */
     public function checkEnvironment()
     {
