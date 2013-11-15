@@ -89,4 +89,12 @@ class Event
     {
         return $this->storage;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->event;
+    }
 } 

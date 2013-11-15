@@ -10,6 +10,7 @@ namespace OpenFW\Events\Traits;
 
 use OpenFW\Events\Eventer;
 use OpenFW\Events\Matchers\AbstractMatcher;
+use OpenFW\Events\Matchers\BinaryMatcher;
 
 trait SimplifiedApiTrait
 {
@@ -40,17 +41,17 @@ trait SimplifiedApiTrait
     /**
      * @see Eventer::addListener
      */
-    public function on(AbstractMatcher $matcher, callable $listener, $priority = Eventer::DEFAULT_PRIORITY)
+    public function on($matcher, callable $listener, $priority = Eventer::DEFAULT_PRIORITY)
     {
-        $this->addListener($matcher, $listener, $priority);
+        $this->addListener($this->getMatcherFromMixed($matcher), $listener, $priority);
     }
 
     /**
      * @see Eventer::addOnceListener
      */
-    public function once(AbstractMatcher $matcher, callable $listener, $priority = Eventer::DEFAULT_PRIORITY)
+    public function once($matcher, callable $listener, $priority = Eventer::DEFAULT_PRIORITY)
     {
-        $this->addOnceListener($matcher, $listener, $priority);
+        $this->addOnceListener($this->getMatcherFromMixed($matcher), $listener, $priority);
     }
 
     /**
@@ -83,5 +84,14 @@ trait SimplifiedApiTrait
     public function triggerBatch(AbstractMatcher $matcher, $data = null)
     {
         return $this->triggerUsingMatcher($matcher, $data);
+    }
+
+    /**
+     * @param mixed $matcher
+     * @return AbstractMatcher|BinaryMatcher
+     */
+    protected function getMatcherFromMixed($matcher)
+    {
+        return ($matcher instanceof AbstractMatcher) ? $matcher : new BinaryMatcher((string) $matcher);
     }
 } 
