@@ -9,18 +9,24 @@ namespace OpenFW\Events;
 
 
 use OpenFW\Events\Matchers\AbstractMatcher;
-use OpenFW\Traits\ContainerAware;
+use OpenFW\Events\Traits\SimplifiedApiTrait;
 
 class Eventer
 {
-    const DEFAULT_PRIORITY = -1;
+    use SimplifiedApiTrait;
+
+    const DEFAULT_PRIORITY = -0x001;
 
     /**
+     * Events -> Listeners hashmap
+     *
      * @var array
      */
     protected $events = [];
 
     /**
+     * Add a new event
+     *
      * @param string $event
      * @throws \UnexpectedValueException
      */
@@ -34,6 +40,8 @@ class Eventer
     }
 
     /**
+     * Check whether event exists
+     *
      * @param string $event
      * @return bool
      */
@@ -43,6 +51,8 @@ class Eventer
     }
 
     /**
+     * Get all available events
+     *
      * @return array
      */
     public function getEvents()
@@ -51,6 +61,10 @@ class Eventer
     }
 
     /**
+     * Add event listener for all
+     * events that matches against
+     * given matcher
+     *
      * @param AbstractMatcher $matcher
      * @param callable $listener
      * @param int $priority
@@ -67,6 +81,34 @@ class Eventer
     }
 
     /**
+     * Add event listener for all
+     * events that matches against
+     * given matcher.
+     *
+     * Note that this listener will run only once!
+     *
+     * @param AbstractMatcher $matcher
+     * @param callable $listener
+     * @param int $priority
+     */
+    public function addOnceListener(AbstractMatcher $matcher, callable $listener, $priority = self::DEFAULT_PRIORITY)
+    {
+        // ensure listener would be run only once
+        $onceListener = function(Event $event) use ($listener) {
+            static $run = false;
+
+            if(!$run) {
+                return call_user_func($listener, $event);
+                $run = true;
+            }
+        };
+
+        $this->addListener($matcher, $onceListener, $priority);
+    }
+
+    /**
+     * Check whether event has any listeners
+     *
      * @param string $event
      * @return bool
      * @throws \OutOfBoundsException
@@ -81,6 +123,8 @@ class Eventer
     }
 
     /**
+     * Get all registered event listeners
+     *
      * @param string $event
      * @return \Generator
      * @throws \OutOfBoundsException
@@ -97,6 +141,8 @@ class Eventer
     }
 
     /**
+     * Remove all registered event listeners
+     *
      * @param string $event
      * @throws \OutOfBoundsException
      */
@@ -110,11 +156,15 @@ class Eventer
     }
 
     /**
+     * Trigger an event.
+     * Event name matches
+     * using biary("===") matcher
+     *
      * @param string $event
      * @param mixed $data
      * @throws \OutOfBoundsException
      */
-    public function trigger($event, $data)
+    public function trigger($event, $data = null)
     {
         if(!$this->exists($event)) {
             throw new \OutOfBoundsException("Event {$event} is not registered");
@@ -132,6 +182,26 @@ class Eventer
     }
 
     /**
+     * Trigger a set of events that
+     * matches against given matcher
+     *
+     * @param AbstractMatcher $matcher
+     * @param mixed $data
+     */
+    public function triggerUsingMatcher(AbstractMatcher $matcher, $data = null)
+    {
+        /** @var $queue \SplPriorityQueue */
+        foreach($this->events as $event => $queue) {
+            if($matcher->match($event)) {
+                $this->trigger($event, $data);
+            }
+        }
+    }
+
+    /**
+     * Create SPL priority queue instance
+     * with EXTR_DATA flag set
+     *
      * @return \SplPriorityQueue
      */
     protected function createQueue()

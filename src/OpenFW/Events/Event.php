@@ -11,7 +11,7 @@ namespace OpenFW\Events;
 class Event
 {
     /**
-     * @var \Pimple
+     * @var \stdClass
      */
     protected $storage;
 
@@ -38,7 +38,7 @@ class Event
     {
         $this->event = $event;
         $this->data = $data;
-        $this->storage = new \Pimple();
+        $this->storage = new \stdClass();
     }
 
     /**
@@ -83,7 +83,7 @@ class Event
     }
 
     /**
-     * @return \Pimple
+     * @return \stdClass
      */
     public function getStorage()
     {
